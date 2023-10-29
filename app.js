@@ -7,6 +7,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -33,8 +34,8 @@ app.use(
             scriptSrc: ["'self'", 'https://*.cloudflare.com'],
             scriptSrcElem: ["'self'", 'https:', 'https://*.cloudflare.com'],
             styleSrc: ["'self'", 'https:', 'unsafe-inline'],
-            connectSrc: ["'self'", 'data', 'https://*.cloudflare.com']
-        }
+            connectSrc: ["'self'", 'data', 'https://*.cloudflare.com'],
+        },
     })
 );
 
@@ -45,7 +46,7 @@ if (process.env.NODE_ENV === 'development') {
 const limiter = rateLimit({
     max: 10,
     windowMs: 60 * 60 * 1000,
-    message: 'Too many request from this IP, please try again later!'
+    message: 'Too many request from this IP, please try again later!',
 });
 app.use('/api', limiter);
 
@@ -63,16 +64,17 @@ app.use(
             'ratingsQuantity',
             'maxGroupSize',
             'difficulty',
-            'price'
-        ]
+            'price',
+        ],
     })
 );
 
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
-    console.log(req.cookies);
     next();
 });
+
+app.use(compression());
 
 // 3. Routes
 app.use('/', viewRouter);

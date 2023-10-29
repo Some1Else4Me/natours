@@ -6,13 +6,13 @@ export const updateSetting = async (data, type) => {
     try {
         const url =
             type === 'data'
-                ? 'http://localhost:3000/api/v1/users/updateMe'
-                : 'http://localhost:3000/api/v1/users/updatePassword';
+                ? '/api/v1/users/updateMe'
+                : '/api/v1/users/updatePassword';
 
         const res = await axios({
             method: 'PATCH',
             url,
-            data
+            data,
         });
 
         if (res.data.status === 'success') {
